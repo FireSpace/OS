@@ -14,4 +14,3 @@ pid_t wrap_fork(void);
 pid_t wrap_waitpid(pid_t pid, int* stat_loc, int options);
 int wrap_execvp(const char* file, char* const argv[]);
 void write_all_data(int fildes, const void* buf, ssize_t nbyte);
-size_t read_all_data(int fildes, void* buf, size_t nbyte);
