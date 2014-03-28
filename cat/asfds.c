@@ -13,8 +13,9 @@ int main(int argc, char **argv)
     if (argc < 2) error_and_exit("not enough arguments");
     char* argv_exec[argc];
     argv_exec[0] = argv[1];
+    argv_exec[1] = argv[2];
 
-    for (int i = 1; i < argc-1; ++i)
+    for (int i = 2; i < argc-1; ++i)
     {
         argv_exec[i] = wrap_malloc(FILDES_LEN);
         memset(argv_exec[i], 0, FILDES_LEN);
@@ -36,6 +37,6 @@ int main(int argc, char **argv)
         _exit(EXIT_SUCCESS);
     }
 
-    for (int i = 1; i < argc-1; ++i) free(argv_exec[i]);
+    for (int i = 2; i < argc-1; ++i) free(argv_exec[i]);
     return EXIT_SUCCESS;
 }

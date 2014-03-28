@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 const size_t BUF_SIZE = 1024;
+char* delimitor;
 
 void read_and_go_out(int fildes)
 {
@@ -17,6 +18,7 @@ void read_and_go_out(int fildes)
         if (len == BUF_SIZE || eof)
         {
             write_all_data(STDOUT_FILENO, buffer, len);
+            printf("%s\n", delimitor);
             len = 0;
         }
     }
@@ -24,7 +26,8 @@ void read_and_go_out(int fildes)
 }
 int main(int argc, char** argv)
 {
-    for (int i = 1; i < argc; ++i)
+    delimitor = argv[1];
+    for (int i = 2; i < argc; ++i)
         read_and_go_out(atoi(argv[i]));
     return EXIT_SUCCESS;
 }
