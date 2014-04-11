@@ -28,6 +28,7 @@ void* wrap_realloc(void* ptr, size_t size)
     if (result == NULL) error_and_exit("realloc : reallocate memory error");
 
     return result;
+}
 
 int wrap_open(const char* pathname, int flags)
 {
