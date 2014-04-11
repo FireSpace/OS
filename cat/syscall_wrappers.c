@@ -3,6 +3,7 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
 #include <stdio.h>
 
 const int ERROR = -1;
@@ -16,12 +17,17 @@ void error_and_exit(char* errmsg)
 void* wrap_malloc(size_t size) 
 {
     void* result = malloc(size);
-    if (result == NULL) {
-        error_and_exit("malloc : allocate memory error");
-    }
+    if (result == NULL) error_and_exit("malloc : allocate memory error");
 
     return result;
 }
+
+void* wrap_realloc(void* ptr, size_t size)
+{
+    void* result = realloc(ptr, size);
+    if (result == NULL) error_and_exit("realloc : reallocate memory error");
+
+    return result;
 
 int wrap_open(const char* pathname, int flags)
 {
