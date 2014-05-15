@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-const size_t BUF_SIZE = 1024;
+const size_t BUF_SIZE = 2; 
 char* delimiter;
 
 typedef struct buffer_t
@@ -35,6 +35,9 @@ void buffer_realloc(buffer* buff)
     buff->data = wrap_realloc(buff->data, buff->size);
 }
 
+char* prev_buff = NULL;
+size_t prev_len = 0;
+
 void reverse_and_print(char* buff, size_t len)
 {
     char* tbuffer = wrap_malloc(BUF_SIZE);
@@ -42,8 +45,15 @@ void reverse_and_print(char* buff, size_t len)
     {
         tbuffer[j] = buff[i];
     }
-    tbuffer[len] = '\n';
-    write_all_data(STDOUT_FILENO, tbuffer, (ssize_t)len+1);
+    if (tbuffer[len-1] != '\n') tbuffer[len] = '\n';
+    if (prev_buff == NULL) prev_buff = wrap_malloc(BUF_SIZE);
+    if (prev_len == 0) { prev_buff = tbuffer; prev_len = len+1; }
+    else
+    {
+        write_all_data(STDOUT_FILENO, tbuffer, (ssize_t)len+1);
+        write_all_data(STDOUT_FILENO, prev_buff, (ssize_t)prev_len);
+        prev_len = 0;
+    }
 }
 
 void buffer_print_data(buffer* buff)
@@ -70,6 +80,22 @@ void buffer_add(buffer* buff, char* newdata, size_t len)
 {
     if (len + buff->length >= buff->size) buffer_realloc(buff);
     memmove(buff->data + buff->length, newdata, len);
+    for (int i = 0; i < len; ++i)
+    {
+       if (newdata[i] == buff->delim)
+       {
+            char* tbuff = wrap_malloc(BUF_SIZE);
+            for (int j = 0; j < buff->length+i; ++j)
+            {
+                tbuff[j] = buff->data[j];
+            }
+            reverse_and_print(tbuff, buff->length+i);
+            memmove(buff->data, buff->data + buff->length+i, len - i);
+            buff->length = len - i;
+            free(tbuff);
+            return;
+       }
+    }
     buff->length += len;
 }
 
@@ -86,14 +112,15 @@ void read_and_go_out(int fildes)
         ssize_t retval = wrap_read(fildes, tbuffer + len, BUF_SIZE - len);
         if (retval == 0) eof = 1;
         len += retval;
-        if (len == BUF_SIZE || eof)
+        if (len == BUF_SIZE || eof || 1)
         {
             buffer_add(&buff, tbuffer, len);
             len = 0;
         }
     }
 
-    buffer_print_data(&buff);
+    //buffer_print_data(&buff);
+    if (prev_len != 0) { write_all_data(STDOUT_FILENO, prev_buff, prev_len); prev_len = 0; }
     buffer_free(&buff);
     free(tbuffer);
 }
