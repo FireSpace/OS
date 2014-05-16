@@ -40,12 +40,16 @@ void async_pipe_d(async_pipe* ap)
 
 int check_pipe_for_read(async_pipe *ap)
 {
-    if (ap->iseof) return ap->iseof;
+    if (ap->iseof){ printf("%i\n", ap->fdin); return 2; }
 
     if ((ap->fd_in_pos->revents & POLLIN) && ap->data_len < BUFFER_SIZE)
     {
         int res = wrap_read(ap->fdin, ap->buff + ap->data_len, BUFFER_SIZE - ap->data_len);
-        if (res == 0) ap->iseof = 1;
+        //printf("%i : %i\n", ap->fdin, res);
+        if (res == 0) { 
+            printf("%i %i %i %i %i\n", ap->fdin, ap->fdout, ap->fd_in_pos->fd, ap->fd_out_pos->fd, ap->iseof);
+            ap->iseof = 1;
+        }
         else ap->data_len += res;
     }
 
@@ -66,6 +70,17 @@ int check_pipe_for_write(async_pipe *ap)
             return 1;
         }
     }
+}
+
+void del_broken_pipe(async_pipe *ap, struct pollfd *fds, size_t pos, size_t fds_num)
+{
+    fds[pos] = fds[fds_num-2];
+    fds[pos+1] = fds[fds_num-1];
+    ap->fdin = fds[pos].fd;
+    ap->fdout = fds[pos+1].fd;
+    ap->fd_in_pos = fds+pos;
+    ap->fd_out_pos = fds+pos+1;
+    //printf("fds: %i\n", fds[pos].fd);
 }
 
 int main (int argc, char **argv)
@@ -95,16 +110,20 @@ int main (int argc, char **argv)
         is_not_eof_all = 0;
         is_not_all_buffers_empty = 0;
 
-        int res = poll(fds, fds_num, -1);
+        int res = 0;
+        if (fds_num != 0) res = poll(fds, fds_num, -1);
         if (res == -1) { perror("poll"); return 1; }
 
         //check for read
         for (size_t i = 0; i < pipes_num; ++i)
         {
-            if (!check_pipe_for_read(ap+i)) is_not_eof_all = 1;
-            else
+            int ret = check_pipe_for_read(ap+i);
+            if (ret == 0) is_not_eof_all = 1;
+            else if (ret == 1)
             {
-                // ЗАПИЛИТЬ ВЫРЕЗАНИЕ ДЕСКРИПТОРА!!!
+                del_broken_pipe(ap + pipes_num -1, fds, i*2, fds_num);
+                fds_num -= 2;
+                //printf("fds_num: %i\n", (int)fds_num);
             }
         }
 
@@ -113,6 +132,11 @@ int main (int argc, char **argv)
         {
             if (check_pipe_for_write(ap+i)) is_not_all_buffers_empty = 1;
         }
+
+        for (size_t i = 0; i < pipes_num; ++i) 
+        printf("%i %i %i %i %i\n", ap[i].fdin, ap[i].fdout, ap[i].fd_in_pos->fd, ap[i].fd_out_pos->fd, ap[i].iseof);
+        printf("\n");
+
     }
 
     for (size_t i = 0; i < pipes_num; ++i) async_pipe_d(ap + i);
