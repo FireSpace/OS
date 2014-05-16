@@ -8,100 +8,112 @@
 
 #define BUFFER_SIZE 1024
 
-ssize_t write_buff(int fildes, char* buff)
+void write_buff(int fd, char *buff)
 {
-    return wrap_write(fildes, buff, strlen(buff));
+    write_all_data(fd, buff, strlen(buff));
 }
 
 typedef struct async_pipe_t
 {
-    int fildes1, fildes2;
-    struct pollfd fds[2];
-    int status; // 1 - time to read, 2 - time to write
-    char* buffer;
+    int fdin, fdout;
+    struct pollfd *fd_in_pos, *fd_out_pos;
+    int iseof;
+    char *buff;
     size_t data_len;
 } async_pipe;
 
-void async_pipe_c(async_pipe* ap, int fildes1, int fildes2)
+void async_pipe_c(async_pipe *ap, int fdin, int fdout, struct pollfd *fd_in_pos, struct pollfd* fd_out_pos)
 {
-    ap->status = 1;
-    ap->buffer = wrap_malloc(BUFFER_SIZE);
+    ap->fdin = fdin;
+    ap->fdout = fdout;
+    ap->fd_in_pos = fd_in_pos;
+    ap->fd_out_pos = fd_out_pos;
+    ap->iseof = 0;
+    ap->buff = wrap_malloc(BUFFER_SIZE);
     ap->data_len = 0;
-
-    ap->fildes1 = fildes1;
-    ap->fildes2 = fildes2;
-    ap->fds[0].fd = fildes1;
-    ap->fds[0].events = POLLIN;
-    ap->fds[1].fd = fildes2;
-    ap->fds[1].events = POLLOUT;
-}
-
-int poll_check(async_pipe* ap)
-{
-    int ret;
-    if (ap->status == 1)
-    {
-        ret = poll(ap->fds, 1, -1);
-        if (ret == -1) { perror("poll "); return 1; }
-
-        if (ret)
-        {
-            ap->data_len = wrap_read(ap->fildes1, ap->buffer, BUFFER_SIZE);
-            ap->status = 2;
-        }
-    }
-
-    if (ap->status == 2)
-    {
-        ret = poll(ap->fds+1, 1, -1);
-        if (ret == -1) { perror("poll "); return 1; }
-
-        if (ret)
-        {
-            int tlen = wrap_write(ap->fildes2, ap->buffer, ap->data_len);
-            if (tlen == (int)ap->data_len)
-            {
-                ap->data_len = 0;
-                ap->status = 1;
-            } else
-            {
-                memcpy(ap->buffer, ap->buffer+tlen, ap->data_len-tlen);
-                ap->data_len -= tlen;
-            }
-        }
-    }
-
-    return 0;
 }
 
 void async_pipe_d(async_pipe* ap)
 {
-    free(ap->buffer);
+    free(ap->buff);
 }
 
-int main(int argc, char** argv)
+int check_pipe_for_read(async_pipe *ap)
 {
-    if (argc < 3) { write_buff(STDERR_FILENO, "too few arguments\n"); return 1; }
-    if (argc%2 == 0) { write_buff(STDERR_FILENO, "number of fds is odd\n"); }
-    size_t numb_aps = (argc-1) / 2;
+    if (ap->iseof) return ap->iseof;
 
-    async_pipe* aps = malloc(sizeof(async_pipe)*numb_aps);
-
-    for (size_t i = 1, j = 0; i <= numb_aps; i+=2, ++j)
+    if ((ap->fd_in_pos->revents & POLLIN) && ap->data_len < BUFFER_SIZE)
     {
-        async_pipe_c(&(aps[j]), atoi(argv[i]), atoi(argv[i+1]));
+        int res = wrap_read(ap->fdin, ap->buff + ap->data_len, BUFFER_SIZE - ap->data_len);
+        if (res == 0) ap->iseof = 1;
+        else ap->data_len += res;
     }
 
-    while (1)
+    return ap->iseof;
+}
+
+int check_pipe_for_write(async_pipe *ap)
+{
+    if (ap->data_len == 0) return 0;
+    else
     {
-        for (size_t i = 0; i < numb_aps; ++i)
+        int res = wrap_write(ap->fdout, ap->buff, ap->data_len);
+        if (res == (int)ap->data_len) { ap->data_len = 0; return 0; }
+        else 
         {
-            if (poll_check(&(aps[i])))
-            {
-                for (size_t j = 0; j < numb_aps; ++j) async_pipe_d(&(aps[j]));
-                //write_buff(STDERR_FILENO, "poll error\n");
-                return 1;
-            }
+            memmove(ap->buff, ap->buff + res, ap->data_len - res);
+            ap->data_len -= res;
+            return 1;
         }
     }
+}
+
+int main (int argc, char **argv)
+{
+    if (argc < 3) {write_buff(STDERR_FILENO, "too few arguments\n"); return 1;}
+    if (argc%2 == 0) {write_buff(STDERR_FILENO, "count of fds is odd\n");}
+
+    size_t pipes_num = (size_t)(argc-1) / 2;
+    size_t fds_num = pipes_num*2;
+    struct pollfd fds[fds_num];
+    async_pipe ap[pipes_num];
+
+    for (size_t i = 1, j = 0; i < (size_t)argc; i += 2, ++j)
+    {
+        fds[i-1].fd = atoi(argv[i]);
+        fds[i-1].events = POLLIN;
+        fds[i].fd = atoi(argv[i+1]);
+        fds[i].events = POLLOUT;
+        async_pipe_c(ap+j, atoi(argv[i]), atoi(argv[i+1]), fds + i-1, fds + i);
+    }
+
+    int is_not_eof_all = 1;
+    int is_not_all_buffers_empty = 0;
+
+    while (is_not_eof_all || is_not_all_buffers_empty)  
+    {
+        is_not_eof_all = 0;
+        is_not_all_buffers_empty = 0;
+
+        int res = poll(fds, fds_num, -1);
+        if (res == -1) { perror("poll"); return 1; }
+
+        //check for read
+        for (size_t i = 0; i < pipes_num; ++i)
+        {
+            if (!check_pipe_for_read(ap+i)) is_not_eof_all = 1;
+            else
+            {
+                // ЗАПИЛИТЬ ВЫРЕЗАНИЕ ДЕСКРИПТОРА!!!
+            }
+        }
+
+        //check for write
+        for (size_t i = 0; i < pipes_num; ++i)
+        {
+            if (check_pipe_for_write(ap+i)) is_not_all_buffers_empty = 1;
+        }
+    }
+
+    for (size_t i = 0; i < pipes_num; ++i) async_pipe_d(ap + i);
 }
