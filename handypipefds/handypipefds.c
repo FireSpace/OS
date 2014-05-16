@@ -41,16 +41,13 @@ void async_pipe_d(async_pipe* ap)
 int check_pipe_for_read(async_pipe *ap)
 {
     if (ap->iseof){ 
-       // printf("%i\n", ap->fdin); 
         return 2; 
     }
 
     if ((ap->fd_in_pos->revents & POLLIN) && ap->data_len < BUFFER_SIZE)
     {
         int res = wrap_read(ap->fdin, ap->buff + ap->data_len, BUFFER_SIZE - ap->data_len);
-        //printf("%i : %i\n", ap->fdin, res);
         if (res == 0) { 
-            ////printf("%i %i %i %i %i\n", ap->fdin, ap->fdout, ap->fd_in_pos->fd, ap->fd_out_pos->fd, ap->iseof);
             ap->iseof = 1;
         }
         else ap->data_len += res;
@@ -81,7 +78,6 @@ void del_broken_pipe(async_pipe *ap, struct pollfd *fds, size_t pos, size_t fds_
     fds[pos+1] = fds[fds_num-1];
     ap->fd_in_pos = fds+pos;
     ap->fd_out_pos = fds+pos+1;
-    //printf("fds: %i\n", fds[pos].fd);
 }
 
 int main (int argc, char **argv)
@@ -124,7 +120,6 @@ int main (int argc, char **argv)
             {
                 del_broken_pipe(ap + pipes_num -1, fds, i*2, fds_num);
                 fds_num -= 2;
-                //printf("fds_num: %i\n", (int)fds_num);
             }
         }
 
@@ -133,11 +128,6 @@ int main (int argc, char **argv)
         {
             if (check_pipe_for_write(ap+i)) is_not_all_buffers_empty = 1;
         }
-
-        //for (size_t i = 0; i < pipes_num; ++i) 
-        //printf("%i %i %i %i %i\n", ap[i].fdin, ap[i].fdout, ap[i].fd_in_pos->fd, ap[i].fd_out_pos->fd, ap[i].iseof);
-        //printf("\n");
-
     }
 
     for (size_t i = 0; i < pipes_num; ++i) async_pipe_d(ap + i);
