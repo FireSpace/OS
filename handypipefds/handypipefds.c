@@ -40,6 +40,7 @@ void async_pipe_d(async_pipe* ap)
 
 int check_pipe_for_read(async_pipe *ap)
 {
+    //eof возникла не сейчас, а раньше, поэтому удаление не требуется
     if (ap->iseof){ 
         return 2; 
     }
