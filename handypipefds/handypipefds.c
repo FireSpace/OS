@@ -59,7 +59,7 @@ int check_pipe_for_read(async_pipe *ap)
 
 int check_pipe_for_write(async_pipe *ap)
 {
-    if (ap->data_len == 0) return 0;
+    if (ap->data_len == 0 || !(ap->fd_out_pos->revents & POLLOUT)) return 0;
     else
     {
         int res = wrap_write(ap->fdout, ap->buff, ap->data_len);
@@ -73,13 +73,13 @@ int check_pipe_for_write(async_pipe *ap)
     }
 }
 
-void del_broken_pipe(async_pipe *ap, struct pollfd *fds, size_t pos, size_t fds_num)
+/*void del_broken_pipe(async_pipe *ap, struct pollfd *fds, size_t pos, size_t fds_num)
 {
     fds[pos] = fds[fds_num-2];
     fds[pos+1] = fds[fds_num-1];
     ap->fd_in_pos = fds+pos;
     ap->fd_out_pos = fds+pos+1;
-}
+}*/
 
 int main (int argc, char **argv)
 {
@@ -119,8 +119,7 @@ int main (int argc, char **argv)
             if (ret == 0) is_not_eof_all = 1;
             else if (ret == 1)
             {
-                del_broken_pipe(ap + pipes_num -1, fds, i*2, fds_num);
-                fds_num -= 2;
+                fds[2*i].fd = -1;
             }
         }
 
