@@ -45,10 +45,11 @@ int check_pipe_for_read(async_pipe *ap)
         return 2; 
     }
 
-    if ((ap->fd_in_pos->revents & POLLIN) && ap->data_len < BUFFER_SIZE)
+    if ((ap->fd_in_pos->revents & (POLLIN | POLLHUP)) && ap->data_len < BUFFER_SIZE)
     {
         int res = wrap_read(ap->fdin, ap->buff + ap->data_len, BUFFER_SIZE - ap->data_len);
         if (res == 0) { 
+            //printf("eof");
             ap->iseof = 1;
         }
         else ap->data_len += res;
@@ -80,6 +81,28 @@ int check_pipe_for_write(async_pipe *ap)
     ap->fd_in_pos = fds+pos;
     ap->fd_out_pos = fds+pos+1;
 }*/
+
+void check_buffer_full(async_pipe *ap)
+{
+    if (ap->data_len >= BUFFER_SIZE)
+    {
+        (*ap->fd_in_pos).fd = -1;
+    } else if ((*ap->fd_in_pos).fd == -1)
+    {
+        (*ap->fd_in_pos).fd = ap->fdin;
+    }
+}
+
+void check_buffer_empty(async_pipe *ap)
+{
+    if (ap->data_len == 0)
+    {
+        (*ap->fd_out_pos).fd = -1;
+    } else if ((*ap->fd_out_pos).fd == -1)
+    {
+        (*ap->fd_out_pos).fd = ap->fdout;
+    }
+}
 
 int main (int argc, char **argv)
 {
@@ -128,7 +151,15 @@ int main (int argc, char **argv)
         {
             if (check_pipe_for_write(ap+i)) is_not_all_buffers_empty = 1;
         }
+
+        for (size_t i = 0; i < pipes_num; ++i)
+        {
+          check_buffer_full(ap+i);
+          check_buffer_empty(ap+i);
+        }
+
     }
+
 
     for (size_t i = 0; i < pipes_num; ++i) async_pipe_d(ap + i);
 }
