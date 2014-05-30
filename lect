@@ -69,3 +69,228 @@
     GOT.PLT
     Ленивая динамическая загрузка
     gmon_start
+
+
+23:05:2014
+    LLVM
+    PNuCL
+    asm.js
+    Алгоритм Малаховски-Сорокина
+        3 степени инициализации :
+            1) она есть
+            2) инцициализирована, но .GOT еще не заполнен
+            3) заполнен .GOT
+        инициализация библиотеки без зависимостей
+    .GOT .PLT локальны для каждой библиотеки
+    
+30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)30:05:2014
+    домашка на 0 баллов
+    асинхронное чтение-запись 
+        epoll
+            p.read(fd, buf, rc, ec) //rc, ec — коллбеки
+            p.write(fd, buf, wc, ec) //wc, ec — коллбеки
+            p.cancell_read(fd)
+            p.cancell_write(fd)
